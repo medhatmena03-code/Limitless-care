@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limitless Care - Medical Billing System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #0d0f12;
+            --panel-bg: #161b22;
+            --accent-gold: #d4af37;
+            --accent-blue: #00e5ff;
+            --text-main: #f0f3f6;
+            --text-muted: #8b949e;
+            --border-color: #21262d;
+            --success-green: #238636;
+            --danger-red: #da3633;
+            --purple: #9b59b6;
+            --panel-control-bg: #1f242c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* Premium Header & Logo */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--panel-bg), #1f242c);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, var(--accent-gold), #fff);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .logo-text h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(to left, #fff, var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text span {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: block;
+            margin-top: -2px;
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2.2fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 1000px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Panel Styling */
+        .panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            margin-bottom: 25px;
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .panel-title span {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-right: auto;
+        }
+
+        /* شريط التبديل لفتح لوحة التحكم الاحترافية */
+        .toggle-control-btn {
+            width: 100%;
+            background-color: #1f242c;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-control-btn:hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+
+        /* شاشة التحكم المدمجة الذكية الجديدة */
+        .management-control-panel {
+            display: none; /* مخفية وتفتح عند الضغط على الزرار */
+            background-color: var(--panel-control-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .control-section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        .control-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: flex-end;
+        }
+
+        @media (max-width: 500px) {
+            .control-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        .control-group {
+            flex: 1;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .control-group input, .control-group select {
+            padding: 8px 10px;
+            font-size: 13px;
+        }
+
+        .btn-action-inline {
+            padding: 9px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+            white-space: nowrap;
+            height: 39px;
+        }
+
+        .btn-add-inline { background-color: var(--success-green); }
+        .btn-add-inline:hover { background-color: #2ea043; }
+        .btn-edit-inline { background-color: #2162b2; }
+        .btn-edit-inline:hover { background-color: #2b76d2; }
+        .btn-delete-inline { background-color: var(--danger-red); }
+        .btn-delete-inline:hover { background-color: #f85149; }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        input, select {
+            width: 100%;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text-main);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+        }
+
+        .grid-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn {
+            width: 100%;
+            background: linear-gradient(45deg, var(--accent-gold), #b3922e);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 8px;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Summary Cards */
+        .summary-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #1f242c, var(--panel-bg));
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .card.total-money::before { background-color: var(--accent-gold); }
+        .card.total-items::before { background-color: var(--accent-blue); }
+
+        .card-val {
+            font-size: 26px;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .card.total-money .card-val { color: var(--accent-gold); }
+        .card.total-items .card-val { color: var(--accent-blue); }
+
+        /* Table Design */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+        }
+
+        th {
+            background-color: #1f242c;
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 14px;
+            font-size: 14px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+
+        tr:hover td {
+            background-color: rgba(255,255,255,0.02);
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* الألوان التلقائية للأقسام */
+        .badge-دواء { background-color: rgba(0, 229, 255, 0.15); color: var(--accent-blue); }
+        .badge-مستلزمات { background-color: rgba(214, 175, 55, 0.15); color: var(--accent-gold); }
+        .badge-أشعة { background-color: rgba(155, 89, 182, 0.15); color: var(--purple); }
+        .badge-تحاليل { background-color: rgba(46, 204, 113, 0.15); color: #2ecc71; }
+        .badge-custom { background-color: rgba(243, 156, 18, 0.15); color: #f39c12; }
+
+        .actions-btn {
+            background: none;
+            border: none;
+            color: var(--danger-red);
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+
+        .actions-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 30px 0;
+            font-size: 14px;
+        }
+
+        .accent-text {
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        /* استايل الفلتر لشاشة التجميع */
+        .filter-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            background-color: var(--bg-dark);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .filter-container label {
+            margin-bottom: 0;
+            white-space: nowrap;
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        .filter-container select {
+            padding: 8px 12px;
+            width: auto;
+            min-width: 180px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <header>
+        <div class="logo-area">
+            <div class="logo-icon">
+                <i class="fa-solid fa-infinity"></i>
+            </div>
+            <div class="logo-text">
+                <h1>LIMITLESS CARE</h1>
+                <span>نظام تجميع وإدارة المطالبات الفاخر للشركات</span>
+            </div>
+        </div>
+        <div>
+            <span style="color: var(--accent-gold); font-size: 14px;">
+                <i class="fa-solid fa-shield-halved"></i> Secure System Active
+            </span>
+        </div>
+    </header>
+
+    <div class="dashboard">
+        
+        <div>
+            <div class="panel">
+                <div class="panel-title">
+                    <i class="fa-solid fa-file-invoice"></i> إدخال بيانات المطالبة
+                </div>
+
+                <button type="button" class="toggle-control-btn" onclick="toggleManagementPanel()">
+                    <i class="fa-solid fa-gear"></i> ⚙️ فتح لوحة التحكم بالأقسام
+                </button>
+
+                <div id="managementPanel" class="management-control-panel">
+                    
+                    <div class="control-section-title"><i class="fa-solid fa-plus-circle"></i> إضافة قسم جديد</div>
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label>اسم القسم المراد إضافته</label>
+                            <input type="text" id="newCategoryName" placeholder="مثال: عمليات أو إقامة">
+                        </div>
+                        <button type="button" class="btn-action-inline btn-add-inline" onclick="inlineAddCategory()">
+                            <i class="fa-solid fa-plus"></i> إضافة
+                        </button>
+                    </div>
+
+                    <div class="control-section-title"><i class="fa-solid fa-sliders"></i> تعديل أو حذف قسم موجود</div>
+                    <div class="control-row" style="margin-bottom: 5px;">
+                        <div class="control-group">
+                            <label>اختر القسم المستهدف</label>
+                            <select id="targetCategorySelect">
+                                <option value="دواء">أدوية (Medicines)</option>
+                                <option value="مستلزمات">مستلزمات طبية (Supplies)</option>
+                                <option value="أشعة">أشعة (X-Ray / Scan)</option>
+                                <option value="تحاليل">تحاليل طبية (Lab Tests)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label>الاسم الجديد (في حالة التعديل)</label>
+                            <input type="text" id="editCategoryNewName" placeholder="اكتب الاسم المعدل هنا">
+                        </div>
+                        <button type="button" class="btn-action-inline btn-edit-inline" onclick="inlineEditCategory()">
+                            <i class="fa-solid fa-pen-to-square"></i> تعديل
+                        </button>
+                        <button type="button" class="btn-action-inline btn-delete-inline" onclick="inlineDeleteCategory()">
+                            <i class="fa-solid fa-trash-can"></i> حذف
+                        </button>
+                    </div>
+                </div>
+                
+                <form id="billingForm">
+                    <div class="form-group">
+                        <label>القسم / التصنيف</label>
+                        <select id="itemType" required>
+                            <option value="دواء">أدوية (Medicines)</option>
+                            <option value="مستلزمات">مستلزمات طبية (Supplies)</option>
+                            <option value="أشعة">أشعة (X-Ray / Scan)</option>
+                            <option value="تحاليل">تحاليل طبية (Lab Tests)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>اسم البيان (الدواء / الإشاعة / التحليل / الخدمة)</label>
+                        <input type="text" id="itemName" placeholder="مثال: Concor 5mg أو إقامة غرفة 201" required>
+                    </div>
+
+                    <div class="grid-inputs">
+                        <div class="form-group">
+                            <label>السعر الإجمالي للبند (EGP)</label>
+                            <input type="number" id="itemPrice" min="0" step="0.01" placeholder="0.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label>الكمية / التكرار</label>
+                            <input type="number" id="itemQty" min="1" value="1" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn">
+                        <i class="fa-solid fa-file-invoice-dollar"></i> إدراج البيان في النظام
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div>
+            <div class="summary-box">
+                <div class="card total-money">
+                    <label>السعر الإجمالي العام للمطالبة</label>
+                    <div class="card-val" id="grandTotal">0.00 EGP</div>
+                </div>
+                <div class="card total-items">
+                    <label>إجمالي عدد مرات الإدخال</label>
+                    <div class="card-val" id="totalCounts">0 مرات</div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">
+                    <i class="fa-solid fa-list-check"></i> حركة الإدخال الفورية (بالترتيب)
+                    <span>يعرض كل عملية لوحدها بدون ضرب السعر في الكمية</span>
+                </div>
+                
+                <div class="table-container">
+                    <table id="invoiceTable">
+                        <thead>
+                            <tr>
+                                <th>التصنيف</th>
+                                <th>البيان / الاسم</th>
+                                <th>الكمية المدرجة</th>
+                                <th>السعر الإجمالي للبند</th>
+                                <th style="width: 50px;">حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                    <div id="emptyState" class="empty-state">
+                        لا توجد بيانات مدرجة حتى الآن.
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel" style="border-color: rgba(214, 175, 55, 0.3);">
+                <div class="panel-title" style="color: #fff;">
+                    <i class="fa-solid fa-chart-pie" style="color: var(--accent-gold);"></i> شاشة التجميع الذكي (منع التكرار)
+                </div>
+
+                <div class="filter-container">
+                    <label><i class="fa-solid fa-filter"></i> تصفية التجميع بحسب:</label>
+                    <select id="summaryFilter" onchange="updateUI()">
+                        <option value="ALL">عرض كل الأقسام معاً</option>
+                        <option value="دواء">أدوية (Medicines)</option>
+                        <option value="مستلزمات">مستلزمات طبية (Supplies)</option>
+                        <option value="أشعة">أشعة (X-Ray / Scan)</option>
+                        <option value="تحاليل">تحاليل طبية (Lab Tests)</option>
+                    </select>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>التصنيف</th>
+                                <th>الاسم (الموّحد)</th>
+                                <th>مجموع الكميات</th>
+                                <th>مجموع الأسعار بالكامل</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summaryTableBody"></tbody>
+                    </table>
+                    <div id="summaryEmptyState" class="empty-state">
+                        في انتظار إدخال البيانات لتجميع المتكرر...
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // System Core Array
+    let invoiceItems = [];
+
+    const billingForm = document.getElementById('billingForm');
+    const tableBody = document.getElementById('tableBody');
+    const summaryTableBody = document.getElementById('summaryTableBody');
+    const emptyState = document.getElementById('emptyState');
+    const summaryEmptyState = document.getElementById('summaryEmptyState');
+    const grandTotalEl = document.getElementById('grandTotal');
+    const totalCountsEl = document.getElementById('totalCounts');
+    const itemTypeSelect = document.getElementById('itemType');
+    const summaryFilter = document.getElementById('summaryFilter');
+    
+    // عناصر اللوحة الاحترافية الجديدة
+    const managementPanel = document.getElementById('managementPanel');
+    const targetCategorySelect = document.getElementById('targetCategorySelect');
+
+    // فتح واغلاق لوحة التحكم بشكل سلس
+    function toggleManagementPanel() {
+        if (managementPanel.style.display === 'block') {
+            managementPanel.style.display = 'none';
+        } else {
+            managementPanel.style.display = 'block';
+        }
+    }
+
+    // فحص تكرار القسم
+    function checkOptionExists(name) {
+        for (let i = 0; i < itemTypeSelect.options.length; i++) {
+            if (itemTypeSelect.options[i].value === name) return true;
+        }
+        return false;
+    }
+
+    // إضافة قسم من داخل الشاشة المدمجة فورا
+    function inlineAddCategory() {
+        const inputField = document.getElementById('newCategoryName');
+        const categoryName = inputField.value.trim();
+        
+        if (categoryName === "") {
+            alert("من فضلك اكتب اسم القسم أولاً!");
+            return;
+        }
+
+        if (checkOptionExists(categoryName)) {
+            alert("هذا القسم موجود بالفعل في القائمة!");
+            itemTypeSelect.value = categoryName;
+            inputField.value = '';
+            return;
+        }
+
+        // إضافة للثلاث قوائم معاً بشكل فوري ومتناسق
+        addOptionToSelect(itemTypeSelect, categoryName);
+        addOptionToSelect(summaryFilter, categoryName);
+        addOptionToSelect(targetCategorySelect, categoryName);
+
+        itemTypeSelect.value = categoryName;
+        inputField.value = '';
+        alert(`تم إضافة قسم "${categoryName}" وتثبيته في النظام!`);
+    }
+
+    // تعديل قسم بالكامل من داخل الشاشة المدمجة
+    function inlineEditCategory() {
+        const oldName = targetCategorySelect.value;
+        const newNameInput = document.getElementById('editCategoryNewName');
+        const newName = newNameInput.value.trim();
+
+        if (newName === "") {
+            alert("من فضلك اكتب الاسم الجديد للقسم لكي يتم التعديل!");
+            return;
+        }
+
+        if (checkOptionExists(newName)) {
+            alert("الاسم الجديد متطابق مع قسم موجود بالفعل!");
+            return;
+        }
+
+        // تعديل عناصر القوائم الثلاثة
+        updateSelectOptionText(itemTypeSelect, oldName, newName);
+        updateSelectOptionText(summaryFilter, oldName, newName);
+        updateSelectOptionText(targetCategorySelect, oldName, newName);
+
+        // تعديل البيانات المدرجة في المصفوفة الرئيسية فوراً لئلا تضيع
+        invoiceItems.forEach(item => {
+            if (item.type === oldName) item.type = newName;
+        });
+
+        updateUI();
+        newNameInput.value = '';
+        alert(`تم تعديل الاسم بنجاح من "${oldName}" إلى "${newName}"!`);
+    }
+
+    // حذف قسم بالكامل من داخل الشاشة المدمجة
+    function inlineDeleteCategory() {
+        const targetName = targetCategorySelect.value;
+        
+        const confirmDelete = confirm(`هل أنت متأكد تماماً من حذف قسم "${targetName}"؟ سيؤدي ذلك لحذف الفواتير والعمليات التابعة له حالياً!`);
+        if (!confirmDelete) return;
+
+        // حذف الخيار من الـ 3 قوائم
+        removeOptionFromSelect(itemTypeSelect, targetName);
+        removeOptionFromSelect(summaryFilter, targetName);
+        removeOptionFromSelect(targetCategorySelect, targetName);
+
+        // تنظيف وحذف البيانات التابعة للقسم المحذوف من السيستم
+        invoiceItems = invoiceItems.filter(item => item.type !== targetName);
+        
+        updateUI();
+        alert(`تم مسح قسم "${targetName}" وتصفية كافة فواتيره بنجاح!`);
+    }
+
+    // مساعدات لتسهيل معالجة الـ Selects ديناميكياً
+    function addOptionToSelect(selectEl, value) {
+        const opt = document.createElement('option');
+        opt.value = value;
+        opt.text = value;
+        selectEl.add(opt);
+    }
+
+    function updateSelectOptionText(selectEl, oldVal, newVal) {
+        for (let i = 0; i < selectEl.options.length; i++) {
+            if (selectEl.options[i].value === oldVal) {
+                selectEl.options[i].value = newVal;
+                selectEl.options[i].text = newVal;
+                break;
+            }
+        }
+    }
+
+    function removeOptionFromSelect(selectEl, value) {
+        for (let i = 0; i < selectEl.options.length; i++) {
+            if (selectEl.options[i].value === value) {
+                selectEl.remove(i);
+                break;
+            }
+        }
+    }
+
+    // Form Submit Event
+    billingForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const type = itemTypeSelect.value;
+        const name = document.getElementById('itemName').value.trim();
+        const price = parseFloat(document.getElementById('itemPrice').value);
+        const qty = parseInt(document.getElementById('itemQty').value);
+
+        const item = {
+            id: Date.now(),
+            type,
+            name,
+            price, 
+            qty
+        };
+
+        invoiceItems.push(item);
+        updateUI();
+
+        document.getElementById('itemName').value = '';
+        document.getElementById('itemPrice').value = '';
+        document.getElementById('itemQty').value = '1';
+        document.getElementById('itemName').focus();
+    });
+
+    window.deleteItem = function(id) {
+        invoiceItems = invoiceItems.filter(item => item.id !== id);
+        updateUI();
+    }
+
+    // Main UI Renderer
+    function updateUI() {
+        tableBody.innerHTML = '';
+        summaryTableBody.innerHTML = '';
+
+        if (invoiceItems.length === 0) {
+            emptyState.style.display = 'block';
+            summaryEmptyState.style.display = 'block';
+            grandTotalEl.innerText = '0.00 EGP';
+            totalCountsEl.innerText = '0 مرات';
+            return;
+        }
+
+        emptyState.style.display = 'none';
+        
+        let calculatedGrandTotal = 0;
+        let totalEntriesCount = invoiceItems.length;
+
+        // 1. جدول الإدخال الفوري المباشر
+        invoiceItems.forEach(item => {
+            calculatedGrandTotal += item.price;
+            
+            const isDefaultType = ['دواء', 'مستلزمات', 'أشعة', 'تحاليل'].includes(item.type);
+            const badgeClass = isDefaultType ? `badge-${item.type}` : 'badge-custom';
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><span class="badge ${badgeClass}">${item.type}</span></td>
+                <td style="font-weight: 600;">${item.name}</td>
+                <td>${item.qty}</td>
+                <td class="accent-text">${item.price.toFixed(2)} EGP</td>
+                <td>
+                    <button type="button" class="actions-btn" onclick="deleteItem(${item.id})">
+                        <i class="fa-regular fa-trash-can"></i>
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        // 2. منطق شاشة التجميع الذكي مع الـ Filter المشروط
+        const aggregatedMap = {};
+        const activeFilter = summaryFilter.value;
+
+        invoiceItems.forEach(item => {
+            if (activeFilter !== 'ALL' && item.type !== activeFilter) {
+                return;
+            }
+
+            const key = `${item.type}_${item.name.toLowerCase()}`;
+            if (!aggregatedMap[key]) {
+                aggregatedMap[key] = {
+                    type: item.type,
+                    name: item.name,
+                    totalQty: 0,
+                    totalPrice: 0
+                };
+            }
+            aggregatedMap[key].totalQty += item.qty;
+            aggregatedMap[key].totalPrice += item.price;
+        });
+
+        const sortedSummaryItems = Object.values(aggregatedMap);
+
+        if (sortedSummaryItems.length === 0) {
+            summaryEmptyState.style.display = 'block';
+        } else {
+            summaryEmptyState.style.display = 'none';
+            sortedSummaryItems.forEach(summaryItem => {
+                const isDefaultType = ['دواء', 'مستلزمات', 'أشعة', 'تحاليل'].includes(summaryItem.type);
+                const badgeClass = isDefaultType ? `badge-${summaryItem.type}` : 'badge-custom';
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="badge ${badgeClass}">${summaryItem.type}</span></td>
+                    <td style="font-weight: 600; color: #fff;">${summaryItem.name}</td>
+                    <td>${summaryItem.totalQty}</td>
+                    <td style="color: #2ecc71; font-weight: 700;">${summaryItem.totalPrice.toFixed(2)} EGP</td>
+                `;
+                summaryTableBody.appendChild(row);
+            });
+        }
+
+        grandTotalEl.innerText = `${calculatedGrandTotal.toFixed(2)} EGP`;
+        totalCountsEl.innerText = `${totalEntriesCount} مرات`;
+    }
+</script>
+
+</body>
+</html>
+
