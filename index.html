@@ -292,12 +292,18 @@
             box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
         }
 
-        /* Summary Cards */
+        /* Summary Cards & Controls */
+        .summary-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
         .summary-box {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            margin-bottom: 25px;
         }
 
         .card {
@@ -330,6 +336,30 @@
 
         .card.total-money .card-val { color: var(--accent-gold); }
         .card.total-items .card-val { color: var(--accent-blue); }
+
+        /* زرار مسح الكل الفخم الجديد */
+        .clear-all-btn {
+            background-color: transparent;
+            border: 1px solid rgba(218, 54, 51, 0.4);
+            color: #ff6b6b;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .clear-all-btn:hover {
+            background-color: rgba(218, 54, 51, 0.15);
+            border-color: var(--danger-red);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(218, 54, 51, 0.2);
+        }
 
         /* Table Design */
         .table-container {
@@ -437,7 +467,7 @@
             </div>
             <div class="logo-text">
                 <h1>LIMITLESS CARE</h1>
-                <span> Smart Medical Claims Aggregation System</span>
+                <span>Smart Medical Claims Aggregation System</span>
             </div>
         </div>
         <div>
@@ -511,7 +541,8 @@
 
                     <div class="form-group">
                         <label>اسم البيان (الدواء / الإشاعة / التحليل / الخدمة)</label>
-                        <input type="text" id="itemName" placeholder="مثال: Concor 5mg أو إقامة غرفة 201" required>
+                        <input type="text" id="itemName" placeholder="مثال: Concor 5mg أو إقامة غرفة 201" list="suggestionsList" autocomplete="off" required>
+                        <datalist id="suggestionsList"></datalist>
                     </div>
 
                     <div class="grid-inputs">
@@ -532,7 +563,7 @@
             </div>
         </div>
 
-        <div>
+        <div class="summary-wrapper">
             <div class="summary-box">
                 <div class="card total-money">
                     <label>السعر الإجمالي العام للمطالبة</label>
@@ -543,6 +574,10 @@
                     <div class="card-val" id="totalCounts">0 مرات</div>
                 </div>
             </div>
+
+            <button type="button" class="clear-all-btn" onclick="clearCurrentClaimData()">
+                <i class="fa-regular fa-trash-can"></i> 🗑️ مسح بيانات المطالبة الحالية لبدء عملية جديدة
+            </button>
 
             <div class="panel">
                 <div class="panel-title">
@@ -609,8 +644,9 @@
 </div>
 
 <script>
-    // System Core Array
+    // System Core Arrays & Memory
     let invoiceItems = [];
+    let savedSuggestions = []; // مصفوفة لحفظ الأسماء السابقة للاقتراحات الذكية
 
     const billingForm = document.getElementById('billingForm');
     const tableBody = document.getElementById('tableBody');
@@ -621,10 +657,72 @@
     const totalCountsEl = document.getElementById('totalCounts');
     const itemTypeSelect = document.getElementById('itemType');
     const summaryFilter = document.getElementById('summaryFilter');
+    const suggestionsList = document.getElementById('suggestionsList');
     
-    // عناصر اللوحة الاحترافية الجديدة
+    // عناصر اللوحة الاحترافية
     const managementPanel = document.getElementById('managementPanel');
     const targetCategorySelect = document.getElementById('targetCategorySelect');
+
+    // تفعيل الـ LocalStorage عند تحميل الصفحة فورا
+    window.addEventListener('DOMContentLoaded', () => {
+        // 1. استعادة البيانات الفاتورة المدرجة
+        const storedItems = localStorage.getItem('limitless_invoice_items');
+        if (storedItems) {
+            invoiceItems = JSON.parse(storedItems);
+        }
+
+        // 2. استعادة قاموس الأدوية والأسماء المحفوظة للإكمال التلقائي
+        const storedSuggestions = localStorage.getItem('limitless_suggestions');
+        if (storedSuggestions) {
+            savedSuggestions = JSON.parse(storedSuggestions);
+        } else {
+            // أسماء افتراضية كمثال أول مرة يفتح فيها السيستم
+            savedSuggestions = ["Concor 5mg", "Panadol Extra", "Amoxicillin 500mg", "تحليل صورة دم كاملة CBC", "أشعة رنين مغناطيسي MRI"];
+            localStorage.setItem('limitless_suggestions', JSON.stringify(savedSuggestions));
+        }
+
+        // 3. استعادة الأقسام المخصصة المضافة من قبل المستخدم (إن وجدت)
+        const storedCategories = localStorage.getItem('limitless_custom_categories');
+        if (storedCategories) {
+            const customCats = JSON.parse(storedCategories);
+            customCats.forEach(cat => {
+                if(!checkOptionExists(cat)) {
+                    addOptionToSelect(itemTypeSelect, cat);
+                    addOptionToSelect(summaryFilter, cat);
+                    addOptionToSelect(targetCategorySelect, cat);
+                }
+            });
+        }
+
+        updateSuggestionsUI();
+        updateUI();
+    });
+
+    // حفظ البيانات الحالية في المتصفح تلقائياً
+    function autoSaveToLocalStorage() {
+        localStorage.setItem('limitless_invoice_items', JSON.stringify(invoiceItems));
+    }
+
+    // تحديث قائمة الـ Datalist في الـ HTML بالأسماء الذكية المدرجة
+    function updateSuggestionsUI() {
+        suggestionsList.innerHTML = '';
+        savedSuggestions.forEach(name => {
+            const option = document.createElement('option');
+            option.value = name;
+            suggestionsList.appendChild(option);
+        });
+    }
+
+    // زرار مسح الفاتورة الحالية لبدء كليم جديد بالكامل
+    function clearCurrentClaimData() {
+        const confirmClear = confirm("هل أنت متأكد تماماً من مسح كافة بيانات المطالبة والجدول الحالي؟ (هذا لن يمسح ذاكرة الأسماء المخزنة للاقتراحات الذكية).");
+        if(confirmClear) {
+            invoiceItems = [];
+            autoSaveToLocalStorage();
+            updateUI();
+            alert("تم تصفية النظام وجاهز لمطالبة جديدة بنجاح!");
+        }
+    }
 
     // فتح واغلاق لوحة التحكم بشكل سلس
     function toggleManagementPanel() {
@@ -641,6 +739,20 @@
             if (itemTypeSelect.options[i].value === name) return true;
         }
         return false;
+    }
+
+    // حفظ قائمة الأقسام المخصصة الحالية
+    function saveCustomCategoriesState() {
+        const currentOptions = [];
+        // نأخذ الأقسام المضافة غير الأربعة الأساسية لكي نحفظها
+        const defaults = ['دواء', 'مستلزمات', 'أشعة', 'تحاليل'];
+        for(let i=0; i<itemTypeSelect.options.length; i++) {
+            const val = itemTypeSelect.options[i].value;
+            if(!defaults.includes(val)) {
+                currentOptions.push(val);
+            }
+        }
+        localStorage.setItem('limitless_custom_categories', JSON.stringify(currentOptions));
     }
 
     // إضافة قسم من داخل الشاشة المدمجة فورا
@@ -660,13 +772,14 @@
             return;
         }
 
-        // إضافة للثلاث قوائم معاً بشكل فوري ومتناسق
         addOptionToSelect(itemTypeSelect, categoryName);
         addOptionToSelect(summaryFilter, categoryName);
         addOptionToSelect(targetCategorySelect, categoryName);
 
         itemTypeSelect.value = categoryName;
         inputField.value = '';
+        
+        saveCustomCategoriesState();
         alert(`تم إضافة قسم "${categoryName}" وتثبيته في النظام!`);
     }
 
@@ -686,16 +799,16 @@
             return;
         }
 
-        // تعديل عناصر القوائم الثلاثة
         updateSelectOptionText(itemTypeSelect, oldName, newName);
         updateSelectOptionText(summaryFilter, oldName, newName);
         updateSelectOptionText(targetCategorySelect, oldName, newName);
 
-        // تعديل البيانات المدرجة في المصفوفة الرئيسية فوراً لئلا تضيع
         invoiceItems.forEach(item => {
             if (item.type === oldName) item.type = newName;
         });
 
+        autoSaveToLocalStorage();
+        saveCustomCategoriesState();
         updateUI();
         newNameInput.value = '';
         alert(`تم تعديل الاسم بنجاح من "${oldName}" إلى "${newName}"!`);
@@ -708,14 +821,14 @@
         const confirmDelete = confirm(`هل أنت متأكد تماماً من حذف قسم "${targetName}"؟ سيؤدي ذلك لحذف الفواتير والعمليات التابعة له حالياً!`);
         if (!confirmDelete) return;
 
-        // حذف الخيار من الـ 3 قوائم
         removeOptionFromSelect(itemTypeSelect, targetName);
         removeOptionFromSelect(summaryFilter, targetName);
         removeOptionFromSelect(targetCategorySelect, targetName);
 
-        // تنظيف وحذف البيانات التابعة للقسم المحذوف من السيستم
         invoiceItems = invoiceItems.filter(item => item.type !== targetName);
         
+        autoSaveToLocalStorage();
+        saveCustomCategoriesState();
         updateUI();
         alert(`تم مسح قسم "${targetName}" وتصفية كافة فواتيره بنجاح!`);
     }
@@ -765,6 +878,15 @@
         };
 
         invoiceItems.push(item);
+
+        // [منطق الذكاء الاصطناعي للاقتراحات الذكية]: إذا كان الاسم جديد تماماً، احفظه في الذاكرة التلقائية
+        if (!savedSuggestions.includes(name)) {
+            savedSuggestions.push(name);
+            localStorage.setItem('limitless_suggestions', JSON.stringify(savedSuggestions));
+            updateSuggestionsUI();
+        }
+
+        autoSaveToLocalStorage();
         updateUI();
 
         document.getElementById('itemName').value = '';
@@ -775,6 +897,7 @@
 
     window.deleteItem = function(id) {
         invoiceItems = invoiceItems.filter(item => item.id !== id);
+        autoSaveToLocalStorage();
         updateUI();
     }
 
@@ -868,4 +991,3 @@
 
 </body>
 </html>
-
